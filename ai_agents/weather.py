@@ -31,70 +31,48 @@ class WeatherAgent:
             api_key=self.api_key
         )
 
-    def create_nodes(self):
-        weather_tool = WeatherTool()
-        
-        agent_prompt = """You are a helpful weather assistant. When asked about weather, use the get_weather tool 
-        to fetch information. Respond in a friendly, conversational tone, focusing on the weather details requested.
-        
-        Always include the location, temperature, and conditions in your final response.
-        """
-        agent = create_react_agent(
-            self.agent_llm,
-            tools=[weather_tool],
-            prompt=agent_prompt,
-        )
+        self.weather_tool = WeatherTool()
 
-        def router(state: RouterState) -> RouterState:
-            last_message = state["messages"][-1].content
+        self.agent_prompt = """
+            You are a helpful weather assistant. When asked about weather, use the get_weather tool 
+            to fetch information. Respond in a friendly, conversational tone, focusing on the weather details requested.
             
-            router_prompt = f"""
-            Analyze this user request: "{last_message}"
-            
-            Determine the appropriate handler by responding with exactly ONE of these options:
-            - "direct_weather": If this is a simple, direct request for current weather in a specific location.
-            - "agent": If this is a weather-related query that may need more reasoning or context.
-            - "general": If this is not related to weather at all.
-            
-            Output only one of these three options with no additional text.
-            """
-            
-            response = self.router_llm.invoke(router_prompt)
-            decision = response.content.strip().lower()
-            
-            if decision not in ["agent", "direct_weather", "general"]:
-                decision = "agent" 
-                
-            state["next"] = decision
-            return state
-        
-        def direct_weather_node(state: RouterState):
-            last_message = state["messages"][-1].content
-            weather_tool = WeatherTool()
-            weather_info = weather_tool._run(last_message.replace("What's the weather in ", "").replace("?", ""))
-            return {"messages": state["messages"] + [AIMessage(content=weather_info)]}
-        
-        def general_node(state: RouterState):
-            last_message = state["messages"][-1].content
-            response = self.agent_llm.invoke(
-                f"""You are a helpful assistant answering general questions.
-                
-                User question: {last_message}
-                
-                Provide a concise, informative response.
-                """
-            )
-            return {"messages": state["messages"] + [AIMessage(content=response.content)]}
-        
+            Always include the location, temperature, and conditions in your final response.
+        """
+
+        self.agent = create_react_agent(
+            self.agent_llm,
+            tools=[self.weather_tool],
+            prompt=self.agent_prompt,
+        )
+    
+    def _create_nodes(self): 
         return {
-            "router": router,
-            "agent": agent, 
-            "direct_weather": direct_weather_node,
-            "general": general_node
+            "router": self._router,
+            "agent": self.agent, 
+            "direct_weather": self._weather_node,
+            "general": self._general_node
         }
     
+    def _weather_node(self, state: RouterState):
+        last_message = state["messages"][-1].content
+        weather_info = self.weather_tool._run(last_message.replace("What's the weather in ", "").replace("?", ""))
+        return {"messages": state["messages"] + [AIMessage(content=weather_info)]}      
+     
+    def _general_node(self, state: RouterState):
+        last_message = state["messages"][-1].content
+        response = self.agent_llm.invoke(
+            f"""You are a helpful assistant answering general questions.
+                
+            User question: {last_message}
+                
+            Provide a concise, informative response.
+            """
+            )
+        return {"messages": state["messages"] + [AIMessage(content=response.content)]}
+    
     def build_graph(self):
-        nodes = self.create_nodes()
+        nodes = self._create_nodes()
         
         workflow = StateGraph(RouterState)
         
@@ -119,6 +97,29 @@ class WeatherAgent:
         
         return workflow.compile()
     
+    def _router(self, state: RouterState) -> RouterState:
+            last_message = state["messages"][-1].content
+            
+            router_prompt = f"""
+            Analyze this user request: "{last_message}"
+            
+            Determine the appropriate handler by responding with exactly ONE of these options:
+            - "direct_weather": If this is a simple, direct request for current weather in a specific location.
+            - "agent": If this is a weather-related query that may need more reasoning or context.
+            - "general": If this is not related to weather at all.
+            
+            Output only one of these three options with no additional text.
+            """
+            
+            response = self.router_llm.invoke(router_prompt)
+            decision = response.content.strip().lower()
+            
+            if decision not in ["agent", "direct_weather", "general"]:
+                decision = "agent" 
+                
+            state["next"] = decision
+            return state 
+    
     def query(self, user_input: str):
         graph = self.build_graph()
         config = {"messages": [HumanMessage(content=user_input)]}
@@ -131,7 +132,9 @@ if __name__ == "__main__":
         weather_agent = WeatherAgent()
         
         weather_queries = [
-            "Should I brind an umbrella to work? I'm currently in NYC"
+            "Should I brind an umbrella to work? I'm currently in NYC",
+            "What is the capital of France?",
+            "What is the weather in SF?",
         ]
         
         for query in weather_queries:
