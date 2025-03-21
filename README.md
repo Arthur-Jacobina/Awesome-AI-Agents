@@ -9,10 +9,10 @@ Contents that will be covered in this workshop:
 - AI "beyond" LLM
 - When AI meets the Real World
 - Giving superpowers to LLM
-- How to make an AI trade on your behalf? 
+    - How to make an AI trade on your behalf? 
 - An Intro to Agentic Systems
-- Most common architectures
-- Zap in a nutshell
+    - Most common architectures
+    - Zap in a nutshell
 - What is next?
 
 ## Introduction
@@ -72,6 +72,8 @@ In short, transformers are the backbone of modern NLP, enabling everything from 
 
 ### Exercise: Let's code a basic transformer
 
+TBD
+
 ### Factors Influencing LLM Development
 What fueled this rise? Three big drivers stand out:
 
@@ -86,9 +88,28 @@ For a more detailed review of LLMs, please refer to: https://arxiv.org/html/2402
 ## Most popular LLM models
 There’s a growing lineup of LLM models, each with unique strengths. Here’s a quick rundown of some heavy hitters as of early 2025:
 
+- LLaMA (Meta AI): The LLaMA series, particularly LLaMA 3.3, is developed by Meta AI and is noted for its dialogue capabilities, supporting 8 languages including English, French, German, Hindi, Italian, Portuguese, Spanish, and Thai. It is optimized for consumer hardware, making it accessible for developers without extensive computational resources.
+- DeepSeek: DeepSeek R1, from DeepSeek AI, is designed for reasoning tasks, utilizing a Mixture of Experts framework. It supports over 20 languages and is particularly strong in scientific and technical domains, making it suitable for applications requiring logical inference and mathematical problem-solving. (also look at DeepSeek V3)
+- Qwen: Qwen, developed by Alibaba, is notable for its multilingual support (29+ languages) and multimodal capabilities. The Qwen2.5-72B-Instruct version excels in coding and mathematical tasks, leveraging advanced transformer architectures like RoPE, SwiGLU, RMSNorm, and Attention QKV. (SOTA: QwQ 32b - reasoning model)
 - GPT Series (OpenAI): From ChatGPT to GPT-4 and beyond, these models are known for their versatility and conversational prowess. They excel in natural language understanding and generation. (NOTE: really good for structured outputs, will get back to it later)
-- LLaMA (Meta AI): Optimized for research, LLaMA models are lightweight yet powerful, often used as a base for custom fine-tuning.
 - Grok (xAI): Designed by X to be truthful and helpful, it was built to assist and provide clear answers, often with a dash of outside perspective on humanity.
 Gemini (Google): A multimodal contender, blending text, images, and more, with a focus on integration into Google’s ecosystem.
 - Claude (Anthropic): Prioritizing safety and interpretability, Claude is a favorite for applications where alignment with human values is key.
 Each model has trade-offs—some are open-source, others proprietary; some shine in reasoning, others in creative tasks. We’ll explore what makes these models tick and how to pick the right one for your AI agent.
+
+If you are interested on learning more about the open source AI space, take some time to look at: https://x.com/zjasper666/status/1893935796358676875
+## AI "beyond" LLMs
+
+## When AI meets the Real World
+
+## Giving superpowers to LLM
+
+### How to make an AI trade on your behalf? 
+
+## An Intro to Agentic Systems
+
+### Most common architectures
+
+### Zap in a nutshell
+
+## What is next?
