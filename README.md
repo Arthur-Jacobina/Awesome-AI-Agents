@@ -306,9 +306,9 @@ Imagine an AI that can buy and sell cryptocurrencies for you, reacting to market
 #### Treating a Crypto Wallet as a tool
 A crypto wallet is just a digital tool that manages your cryptocurrencies—holding funds, sending payments, or receiving assets. For an AI to trade on your behalf, you can give it access to this wallet in the same way you’d let an AI tap into a weather API for real-time forecasts. Here’s an high-level look at how to make it happen:
 
-1. Set up a cryptocurrency wallet and provide controlled access to your AI agent by securely managing private keys within the execution environment
+1. Set up a crypto wallet and provide controlled access to your AI agent by securely managing private keys within the execution environment
 2. Design a wallet provider interface with clear abstraction methods that serve as a bridge between your AI agent and blockchain functionality
-3. Implement essential cryptocurrency operations (Transfers, Trades, Balance Checks) as discrete tools the AI can utilize when needed
+3. Implement essential blockchain operations (Transfers, Trades, Balance Checks) as discrete tools the AI can utilize when needed
 
 This simple implementation can be expanded with several security-focused improvements:
 
@@ -322,8 +322,73 @@ By implementing these measures, you can balance the convenience of AI-assisted c
 
 
 ## An Intro to Agentic Systems
+So far, we’ve explored how large language models (LLMs) can chat, reason, and even call tools to interact with the world. But what happens when you want an AI that doesn’t just respond to one-off questions—like “What’s the weather?”—but instead tackles multi-step, real-world tasks? Enter agentic systems: the next level of AI that can plan, adapt, and act dynamically. In this section, we’ll break down what agentic systems are, why they’re a game-changer, and the most common architectures you’ll encounter as you build your own AI agents.
 
-### Most common architectures
+#### What Are Agentic Systems?
+Think of an agentic system as an LLM with a brain and hands. It’s not just spitting out text—it’s figuring out what to do, when to do it, and how to get it done. At Anthropic, they define agentic systems broadly: any setup where an LLM orchestrates tools or workflows to solve problems. But there’s a key split in how these systems are built:
+
+- Workflows: The LLM follows a predefined script—like a recipe. You code the steps (e.g., “check the weather, then suggest an outfit”), and the LLM fills in the blanks with its smarts.
+- Agents: The LLM takes the wheel. It decides the steps, picks the tools, and adjusts on the fly based on what’s happening—like a sous-chef improvising a meal from whatever’s in the kitchen.
+
+Both are agentic, but agents are more autonomous, making them ideal for open-ended challenges where the path isn’t set in stone. Imagine asking your AI, “Plan my weekend in São Paulo.” A workflow might churn out a static itinerary, while an agent could check the weather, book a restaurant, and pivot if it rains—all without you micromanaging.
+
+#### Why Go Agentic?
+LLMs alone are like genius librarians—they’ve read everything but can’t leave the library. Agentic systems break them out, letting them act in the real world. Here’s why that matters:
+
+- Tackles Complexity: Multi-step tasks—like trading crypto or managing customer support—need more than one-shot answers. Agents handle the back-and-forth.
+- Adapts on the Fly: Real life throws curveballs. Agents can rethink their approach if a tool fails or new info pops up.
+- Scales Your Ideas: Want an AI to run your crypto trades 24/7 or answer customer queries nonstop? Agents make it happen.
+
+But there’s a catch: more power means more complexity, cost, and sometimes unpredictability. The trick is knowing when to keep it simple (a single LLM call) versus when to unleash an agent. Spoiler: start simple, then level up when you need to.
+
+### Most Common Architectures
+Building an agentic system isn’t about reinventing the wheel—it’s about picking the right pattern for your task. Drawing from real-world implementations (and Anthropic’s insights), here are the most common architectures you’ll see. Each one’s a building block you can tweak or combine for your own projects.
+
+1. **Prompt Chaining**
+- What It Is: Break a task into steps, where each LLM call feeds into the next—like passing a baton in a relay race.
+- How It Works: You define the sequence (e.g., “write an outline, then draft an email”), and the LLM processes one chunk at a time. Add checks between steps to keep it on track.
+- When to Use It: Perfect for tasks with clear, predictable stages—like generating a report or translating a document.
+- Example: “Summarize this article, then turn it into a tweet.” Step 1: LLM summarizes. Step 
+2: LLM crafts the tweet.
+
+2. **Routing**
+- What It Is: The LLM sorts inputs and sends them to the right handler—like a traffic cop directing cars.
+- How It Works: It classifies the request (e.g., “weather query” vs. “general question”) and routes it to a specialized workflow or tool.
+- When to Use It: Great for mixed-bag inputs, like customer service where queries range from “Where’s my order?” to “How do I reset my password?”
+- Example: “What’s the weather in Rio?” → Routes to a weather tool. “What’s Brazil’s capital?” → Routes to a general knowledge response.
+
+3. **Parallelization**
+- What It Is: Split a task into pieces that run at the same time, then combine the results—like a team of chefs cooking different dishes for a feast.
+- How It Works: Either break a big job into subtasks (sectioning) or run the same task multiple times for better accuracy (voting).
+- When to Use It: Use it for speed (parallel subtasks) or confidence (multiple takes on a tricky question).
+- Example: “Review this code for bugs.” Three LLM calls check different angles—syntax, logic, security—then merge findings.
+
+4. **Orchestrator-Workers**
+- What It Is: One LLM (the orchestrator) delegates tasks to other LLMs or tools (workers), then ties it all together—like a project manager with a crew.
+- How It Works: The orchestrator decides what needs doing (e.g., “search this, calculate that”), assigns jobs, and synthesizes the output.
+- When to Use It: Ideal for complex, unpredictable tasks where the steps depend on the input—like coding a feature or researching a topic.
+- Example: “Plan a trip to Salvador.” Orchestrator assigns: “Worker 1, check flights. Worker 2, find hotels.” Then it builds the itinerary.
+
+5. **Evaluator-Optimizer**
+- What It Is: One LLM generates a response, another critiques it, and they loop until it’s perfect—like a writer and editor polishing a draft.
+- How It Works: The generator spits out an answer, the evaluator scores it (e.g., “too vague”), and they iterate.
+- When to Use It: Best for tasks needing refinement, like writing a killer blog post or nailing a tricky translation.
+- Example: “Translate this poem into Portuguese.” Generator translates, evaluator flags awkward phrasing, and they refine it.
+
+6. **Autonomous Agents**
+- What It Is: The full Jarvis experience—an LLM that plans, acts, and learns from feedback in a loop, no hand-holding required.
+- How It Works: Given a goal (e.g., “trade ETH for me”), it picks tools, makes decisions, and adjusts based on results (e.g., market data). It might pause for your input or stop after a set limit.
+- When to Use It: Open-ended problems where flexibility trumps predictability—like managing investments or solving coding puzzles.
+- Example: “Keep my crypto portfolio balanced.” It monitors prices, trades when needed, and reports back.
+
+#### Tips for success
+1. Start Simple: Don’t jump to autonomous agents if a single LLM call works. Add complexity only when it pays off.
+2. Test: Agents can go off the rails—sandbox them first and set guardrails (e.g., max steps, human checkpoints).
+3. Know Your Tools: Clear tool docs and interfaces (like we’ll craft for our crypto wallet) make or break an agent.
+
+Read more: https://www.anthropic.com/engineering/building-effective-agents
+
+A good summary: https://x.com/danilowhk2/status/1901665315429216521
 
 ### Zap in a nutshell
 
