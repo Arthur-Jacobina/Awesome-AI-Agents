@@ -156,6 +156,41 @@ Imagine an LLM in healthcare: without tools, it can only describe symptoms. As a
 For LLMs to go from being smart chatbots to indispensable helpers, they need to call tools and interact with their environment. It’s not optional, it’s essential. This ability bridges the gap between digital intelligence and real-world impact, making AI not just a talker, but a doer.
 
 ## Giving superpowers to LLM
+You might be wondering: how can I make a large language model (LLM) call a tool? At its core, this is about enhancing an LLM’s capabilities beyond just generating text—turning it into something more dynamic and interactive. One way to achieve this is through instruct models, which are specialized LLMs fine-tuned to follow commands and execute specific tasks, like summarizing text or translating sentences. However, for this workshop, we won’t dig deeper into the details of instruct models. Instead, let’s focus on a practical approach: using frameworks that make it easy to integrate tools with LLMs, effectively giving them "superpowers."
+
+At a high level, there are several frameworks designed to enable LLMs to call external tools and interact with the world around them. These frameworks simplify the process so you don’t need to build everything from scratch. Today, we’ll zoom in on one in particular: LangGraph. But before we dive into LangGraph, let’s briefly touch on why this matters and what it enables.
+
+### Why choose LangGraph
+LangGraph stands out for a few key reasons:
+
+- **Simplified Agent Building**: It provides a clear structure for defining workflows, making it easier to manage an agent’s tasks.
+- **Tool Integration**: You can define tools—like APIs or databases—and specify when the LLM should call them.
+- **State Management**: It tracks the conversation or task state, ensuring the agent knows what to do next.
+
+Imagine an agent that:
+
+1. Receives a user request, like "What’s the weather like today?"
+2. Recognizes it needs external data and calls a weather API.
+3. Uses the API’s response to craft an answer, such as "It’s sunny and 75°F in your area."
+
+LangGraph makes this kind of workflow manageable to implement.
+
+### How LangGraph work
+At its core, LangGraph organizes an agent’s behavior into three main components:
+
+- **Nodes**: These are the building blocks of the workflow, representing actions (e.g., calling a tool) or decision points (e.g., checking what the user asked).
+- **Edges**: These connect the nodes, defining the flow based on conditions or outcomes.
+- **State**: A shared object that holds information—like user inputs or tool outputs—across the workflow.
+
+For example, a node might check if a user’s request requires real-time data. If it does, the workflow moves to a tool-calling node; if not, it skips to generating a response directly.
+
+In the following sections, we’ll set up LangGraph for practical use by defining simple tools and connecting them to an LLM (react agent).
+
+By the end, you’ll have the skills to create your own AI agents that can interact with the world think personal assistants, trading bots, or even automated support systems. Let’s move forward and bring these superpowers to life!
+
+### Exercise: Let's create a weather agent
+
+look at weather.py
 
 ### How to make an AI trade on your behalf? 
 
