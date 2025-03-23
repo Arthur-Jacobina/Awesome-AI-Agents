@@ -37,10 +37,16 @@ But what's behind this leap? LLMs rely on transformer architectures, a breakthro
 ### A little bit of history
 
 #### Statistical Language Models (SLMs)
-Born in the 1990s, SLMs were the first step in modeling language probabilistically. They aimed to calculate the likelihood of a sentence—like "I am very happy"—appearing in a text, expressed as \( P(S) = P(I, am, very, happy) \). Using conditional probabilities, this breaks down to \( P(I) \times P(am | I) \times P(very | I, am) \times P(happy | I, am, very) \). To estimate these, SLMs relied on Maximum Likelihood Estimation, substituting probabilities with word sequence frequencies from a training set, e.g., \( P(w_i | w_1 \ldots w_{i-1}) = \frac{C(w_1 \ldots w_i)}{C(w_1 \ldots w_{i-1})} \). The n-gram approach assumed each word depended only on the prior \( n-1 \) words, but with \( n \) typically limited to 2 or 3 due to storage constraints, accuracy suffered as vocabulary size grew exponentially.
+Born in the 1990s, SLMs were the first step in modeling language probabilistically. They aimed to calculate the likelihood of a sentence—like "I am very happy"—appearing in a text, expressed as P(S) = P(I, am, very, happy). Using conditional probabilities, this breaks down to P(I) × P(am | I) × P(very | I, am) × P(happy | I, am, very). To estimate these, SLMs relied on Maximum Likelihood Estimation, substituting probabilities with word sequence frequencies from a training set, e.g., P(w<sub>i</sub> | w<sub>1</sub> ... w<sub>i-1</sub>) = C(w<sub>1</sub> ... w<sub>i</sub>)/C(w<sub>1</sub> ... w<sub>i-1</sub>). The n-gram approach assumed each word depended only on the prior n-1 words, but with n typically limited to 2 or 3 due to storage constraints, accuracy suffered as vocabulary size grew exponentially.
 
 #### Neural Language Models (NLMs)
-By the early 2000s, NLMs emerged, swapping statistical counts for neural networks. They introduced word vectors—numerical representations where "cat" and "dog" are closer in vector space than "cat" and "tree," thanks to tools like Word2Vec. An NLM's structure includes an input layer (concatenating vectors of \( n-1 \) prior words), a hidden layer (applying non-linear functions like sigmoid), and an output layer (predicting the next word via Softmax, e.g., \( O_i' = \frac{\exp(O_i)}{\sum_{j=1}^{|V|} \exp(O_j)} \)). This allowed NLMs to handle longer dependencies and capture semantic relationships, overcoming SLMs' rigid n-gram limits.
+By the early 2000s, NLMs emerged, swapping statistical counts for neural networks. They introduced word vectors—numerical representations where "cat" and "dog" are closer in vector space than "cat" and "tree," thanks to tools like Word2Vec. An NLM's structure includes an input layer (concatenating vectors of n-1 prior words), a hidden layer (applying non-linear functions like sigmoid), and an output layer (predicting the next word via Softmax, see Equation [1]). This allowed NLMs to handle longer dependencies and capture semantic relationships, overcoming SLMs' rigid n-gram limits.
+
+**Equation [1]:**
+
+![Softmax Equation][eq]
+
+[eq]: https://latex.codecogs.com/png.image?\dpi{150}\bg{black}O_i'=\frac{\exp(O_i)}{\sum_{j=1}^{|V|}\exp(O_j)}
 
 #### Pre-Trained Language Models (PLMs)
 
@@ -55,9 +61,9 @@ At their core, transformers are built to handle sequences, whether it's translat
 #### Self-Attention: The Magic Ingredient
 Self-attention is the heart of the transformer. Here's how it works: for each word in the input, the model creates three vectors **Query (Q)**, **Key (K)**, and **Value (V)** by multiplying the word's vector (like the ones from Word2Vec in NLMs) by three different weight matrices. Then, it computes an attention score by taking the dot product of the Query of one word with the Key of every other word, scaling it, and applying a Softmax function to get a probability distribution. Mathematically, the attention output for a word is:
 
-Attention(Q, K, V) = Softmax(QK^T/sqrt{d_k})V \]
+![Attention Equation](https://latex.codecogs.com/png.image?\dpi{150}\bg{black}\text{Attention}(Q,K,V)=\text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V)
 
-where \( d_k \) is the dimension of the Key vector, used for scaling to prevent large values from destabilizing the computation. This process lets the model weigh the importance of other words when understanding a given word, capturing relationships that SLMs' n-grams or NLMs' sequential processing couldn't.
+where d<sub>k</sub> is the dimension of the Key vector, used for scaling to prevent large values from destabilizing the computation. This process lets the model weigh the importance of other words when understanding a given word, capturing relationships that SLMs' n-grams or NLMs' sequential processing couldn't.
 
 #### Multi-Head Attention and Layers
 Transformers don't stop at one round of attention—they use **multi-head attention**, running the attention mechanism multiple times in parallel with different weight matrices. This allows the model to focus on different aspects of the sequence simultaneously (e.g., syntax, semantics). The outputs of these "heads" are concatenated and transformed to produce the final representation. A transformer typically stacks multiple layers of this multi-head attention, along with feed-forward neural networks, normalization, and residual connections, to refine the representation at each step.
@@ -77,7 +83,7 @@ In this exercise, we'll implement a transformer from scratch using PyTorch, foll
 #### Key Components
 
 1. **Attention Mechanism**
-   - Single attention head computes: \[ Attention(Q,K,V) = Softmax(\frac{QK^T}{\sqrt{d_k}})V \]
+   - Single attention head computes: see [the attention equation above](#attention-equation)
    - Multi-head attention allows model to focus on different aspects simultaneously
    - Implementation includes masking for decoder self-attention
 
